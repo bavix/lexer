@@ -4,6 +4,15 @@ namespace Bavix\Lexer;
 
 use Bavix\Iterator\Traits\JsonSerializable;
 
+/**
+ * Class Token
+ *
+ * @package Bavix\Lexer
+ *
+ * @property string $token
+ * @property string $name
+ * @property int    $type
+ */
 class Token implements \JsonSerializable
 {
 
