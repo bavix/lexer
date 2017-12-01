@@ -18,7 +18,7 @@ class Validator
     const T_WITH    = self::T_ENDHELPER - 1;
     const T_ENDWITH = self::T_WITH - 1;
 
-    const T_DOT = self::T_WITH - 1;
+    const T_DOT = self::T_ENDWITH - 1;
     const T_AT  = self::T_DOT - 1;
 
     const T_CONCAT = self::T_AT - 1;
