@@ -3,7 +3,6 @@
 namespace Bavix\Lexer;
 
 use Bavix\Exceptions;
-use Bavix\Foundation\Arrays\Queue;
 
 class Lexer
 {
@@ -272,21 +271,38 @@ class Lexer
                 $last  = null;
                 $code  = '';
             }
-            else if ($type && $end[$type] !== $data)
+            else if ($type)
             {
-                if ($this->last($last, $data, '('))
+                if ($end[$type] !== $data)
                 {
-                    $last->type = \T_FUNCTION;
+                    if ($this->last($last, $data, '('))
+                    {
+                        $last->type = \T_FUNCTION;
+                    }
+                    else if ($this->last($last, $data, '.') || $dot)
+                    {
+                        $dot         = !$dot;
+                        $last->token .= $data;
+
+                        continue;
+                    }
+
+                    $mixed[] = $last = new Token($data, $_type);
                 }
-                else if ($this->last($last, $data, '.') || $dot)
+                else
                 {
-                    $dot         = !$dot;
-                    $last->token .= $data;
+                    $_next = $queue->next();
 
-                    continue;
+                    if ($end[$type] === $data && $_next)
+                    {
+                        $_nextToken = $_next[1] ?? $_next;
+
+                        if ($_nextToken !== '}')
+                        {
+                            $mixed[] = $last = new Token($data, $_type);
+                        }
+                    }
                 }
-
-                $mixed[] = $last = new Token($data, $_type);
             }
 
             $lastChar = $data;
