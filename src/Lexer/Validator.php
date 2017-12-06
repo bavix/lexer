@@ -26,6 +26,9 @@ class Validator
     const T_CONCAT = self::T_AT - 1;
     const T_COMMA = self::T_CONCAT- 1;
 
+    const T_QUESTION_MARK    = self::T_COMMA - 1;
+    const T_EXCLAMATION_MARK = self::T_QUESTION_MARK - 1;
+
     protected static $globalTypes = [
         '['    => \T_ARRAY,
         ']'    => self::T_ENDARRAY,
@@ -36,7 +39,9 @@ class Validator
         '~'    => self::T_CONCAT,
         ','    => self::T_COMMA,
         '.'    => self::T_DOT,
-        '@'    => self::T_AT
+        '@'    => self::T_AT,
+        '!'    => self::T_EXCLAMATION_MARK,
+        '?'    => self::T_QUESTION_MARK,
     ];
 
     protected static $lexerTypes = [
