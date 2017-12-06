@@ -257,7 +257,7 @@ class Lexer
                 $name     = $token->name;
                 $fragment = \preg_replace('~[ \t\n\r\v]{2,}~', ' ', $code);
 
-                $storage[$type][$code] = [
+                $storage[$type][] = [
                     'type'     => $type,
                     'print'    => $print,
                     'escape'   => $this->escaping[$type],
