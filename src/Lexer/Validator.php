@@ -18,7 +18,9 @@ class Validator
     const T_WITH    = self::T_ENDHELPER - 1;
     const T_ENDWITH = self::T_WITH - 1;
 
-    const T_DOT = self::T_ENDWITH - 1;
+    const T_FORELSE = self::T_ENDWITH - 1;
+
+    const T_DOT = self::T_FORELSE - 1;
     const T_AT  = self::T_DOT - 1;
 
     const T_CONCAT = self::T_AT - 1;
@@ -44,6 +46,8 @@ class Validator
 
             'with'    => self::T_WITH,
             'endwith' => self::T_ENDWITH,
+
+            'forelse' => self::T_FORELSE,
         ],
     ];
 
@@ -135,11 +139,6 @@ class Validator
         }
 
         return $token;
-    }
-
-    public function valid(array $tokens)
-    {
-
     }
 
 }
