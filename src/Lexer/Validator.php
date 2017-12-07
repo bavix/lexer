@@ -31,6 +31,9 @@ class Validator
 
     const T_MOD = self::T_EXCLAMATION_MARK - 1;
 
+    const T_SET = self::T_MOD - 1;
+    const T_ENDSET = self::T_SET - 1;
+
     protected static $globalTypes = [
         '['    => \T_ARRAY,
         ']'    => self::T_ENDARRAY,
@@ -56,6 +59,9 @@ class Validator
             'endwith' => self::T_ENDWITH,
 
             'forelse' => self::T_FORELSE,
+
+            'set'    => self::T_SET,
+            'endset' => self::T_ENDSET,
         ],
     ];
 
