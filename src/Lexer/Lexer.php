@@ -104,6 +104,7 @@ class Lexer
             self::PRINTER  => [],
         ];
 
+        $isOpen = false;
         $iterate = 0;
         $anyType  = null;
         $lastChar = null;
@@ -219,18 +220,19 @@ class Lexer
 
             $index = $lastChar . $data;
 
-            if ((isset($open[$index]) && $type) || (isset($close[$index]) && !$type))
+            if ((!$isOpen && isset($open[$index]) && $type) || (isset($close[$index]) && !$type))
             {
                 throw new Exceptions\Logic('Syntax error `' . $lastChar . $data . '`');
             }
 
-            if (isset($open[$index]))
+            if (!$isOpen && isset($open[$index]))
             {
                 if ($dot)
                 {
                     throw new Exceptions\Runtime('Undefined dot');
                 }
 
+                $isOpen = true;
                 $type  = $open[$lastChar . $data];
                 $print = $this->prints[$type];
             }
@@ -266,6 +268,7 @@ class Lexer
                     'tokens'   => $mixed
                 ];
 
+                $isOpen = false;
                 $mixed = [];
                 $type  = null;
                 $last  = null;
