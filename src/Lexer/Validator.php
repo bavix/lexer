@@ -38,6 +38,8 @@ class Validator
     const T_SET    = self::T_MOD - 1;
     const T_ENDSET = self::T_SET - 1;
 
+    const T_CONSTANT = self::T_ENDSET - 1;
+
     protected static $globalTypes = [
         '['     => \T_ARRAY,
         ']'     => self::T_ENDARRAY,
