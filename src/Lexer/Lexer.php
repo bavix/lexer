@@ -169,6 +169,11 @@ class Lexer
 
                 $_type = Validator::getType($data, $isVar ? \T_VARIABLE : \T_STRING, $type);
 
+                if (\defined($data))
+                {
+                    $_type = Validator::T_CONSTANT;
+                }
+
                 if ($isVar && !empty($mixed))
                 {
                     $mix = current($mixed);
