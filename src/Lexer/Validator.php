@@ -5,10 +5,14 @@ namespace Bavix\Lexer;
 class Validator
 {
 
-    const T_EQUAL      = 100000;
-    const T_FOR_IN     = self::T_EQUAL - 1;
-    const T_NULL       = self::T_FOR_IN - 1;
-    const T_BRACKET    = self::T_NULL - 1;
+    const T_EQUAL  = 100000;
+    const T_FOR_IN = self::T_EQUAL - 1;
+
+    const T_NULL  = self::T_FOR_IN - 1;
+    const T_TRUE  = self::T_NULL - 1;
+    const T_FALSE = self::T_TRUE - 1;
+
+    const T_BRACKET    = self::T_FALSE - 1;
     const T_ENDBRACKET = self::T_BRACKET - 1;
     const T_ENDARRAY   = self::T_ENDBRACKET - 1;
 
@@ -24,30 +28,32 @@ class Validator
     const T_AT  = self::T_DOT - 1;
 
     const T_CONCAT = self::T_AT - 1;
-    const T_COMMA = self::T_CONCAT- 1;
+    const T_COMMA  = self::T_CONCAT - 1;
 
     const T_QUESTION_MARK    = self::T_COMMA - 1;
     const T_EXCLAMATION_MARK = self::T_QUESTION_MARK - 1;
 
     const T_MOD = self::T_EXCLAMATION_MARK - 1;
 
-    const T_SET = self::T_MOD - 1;
+    const T_SET    = self::T_MOD - 1;
     const T_ENDSET = self::T_SET - 1;
 
     protected static $globalTypes = [
-        '['    => \T_ARRAY,
-        ']'    => self::T_ENDARRAY,
-        '='    => self::T_EQUAL,
-        'null' => self::T_NULL,
-        '('    => self::T_BRACKET,
-        ')'    => self::T_ENDBRACKET,
-        '~'    => self::T_CONCAT,
-        ','    => self::T_COMMA,
-        '.'    => self::T_DOT,
-        '@'    => self::T_AT,
-        '!'    => self::T_EXCLAMATION_MARK,
-        '?'    => self::T_QUESTION_MARK,
-        '%'    => self::T_QUESTION_MARK,
+        '['     => \T_ARRAY,
+        ']'     => self::T_ENDARRAY,
+        '='     => self::T_EQUAL,
+        'null'  => self::T_NULL,
+        'true'  => self::T_TRUE,
+        'false' => self::T_FALSE,
+        '('     => self::T_BRACKET,
+        ')'     => self::T_ENDBRACKET,
+        '~'     => self::T_CONCAT,
+        ','     => self::T_COMMA,
+        '.'     => self::T_DOT,
+        '@'     => self::T_AT,
+        '!'     => self::T_EXCLAMATION_MARK,
+        '?'     => self::T_QUESTION_MARK,
+        '%'     => self::T_QUESTION_MARK,
     ];
 
     protected static $lexerTypes = [
