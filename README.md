@@ -4,8 +4,10 @@
 $source = "var {{ name }}: {{ type }};";
 $lexer  = new \Bavix\Lexer\Lexer();
 $tokens = $lexer->tokens($source);
+```
 
-/**
+Results:
+```
 array(4) {
   [1] =>
   array(0) {
@@ -58,7 +60,6 @@ array(4) {
   array(0) {
   }
 }
-*/
 ```
 
 ---
