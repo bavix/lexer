@@ -5,15 +5,16 @@ namespace Bavix\Test;
 use Bavix\Lexer\Lexer;
 use Bavix\Lexer\Token;
 
-class SimpleTest extends TestCase
+class VariableTest extends TestCase
 {
 
     /**
+     * @param string $source
      * @return void
+     * @dataProvider dataProviderSource
      */
-    public function testVariable(): void
+    public function testSimple(string $source): void
     {
-        $source = '{{var}}';
         $fragments = $this->lexer->tokens($source);
 
         // empty
@@ -33,7 +34,7 @@ class SimpleTest extends TestCase
         $this->assertTrue($fragment['print']);
         $this->assertTrue($fragment['escape']);
         $this->assertEquals('T_VAR', $fragment['name']);
-        $this->assertEquals($source, $fragment['code']);
+        $this->assertEquals(trim($source), $fragment['code']);
         $this->assertEquals('var', $fragment['fragment']);
         $this->assertCount(1, $fragment['tokens']);
 
@@ -48,6 +49,24 @@ class SimpleTest extends TestCase
         $this->assertEquals('var', $token->token);
         $this->assertEquals(T_VAR, $token->type);
         $this->assertEquals('T_VAR', $token->name);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderSource(): array
+    {
+        return [
+            ['{{var }}'],
+            ['{{var}}'],
+            ['{{ var}}'],
+            ['{{ var }}'],
+            ['  {{ var }}'],
+            ['  {{ var }}   '],
+            ['  {{ var  }}'],
+            ['  {{ var}}    '],
+            ['  {{      var }}           '],
+        ];
     }
 
 }
