@@ -5,7 +5,7 @@ namespace Bavix\Test;
 use Bavix\Lexer\Lexer;
 use Bavix\Lexer\Token;
 
-class VariableTest extends TestCase
+class RawVariableTest extends TestCase
 {
 
     /**
@@ -19,21 +19,21 @@ class VariableTest extends TestCase
         $lexemes = $lexObject->getLexemes();
 
         // empty
-        $this->assertEquals([], $lexemes[Lexer::RAW]);
+        $this->assertEquals([], $lexemes[Lexer::PRINTER]);
         $this->assertEquals([], $lexemes[Lexer::OPERATOR]);
         $this->assertEquals([], $lexemes[Lexer::LITERAL]);
 
-        $this->assertCount(1, $lexemes[Lexer::PRINTER]);
+        $this->assertCount(1, $lexemes[Lexer::RAW]);
 
         /**
          * Get first fragment
          * @var array $fragment
          */
-        $fragment = reset($lexemes[Lexer::PRINTER]);
+        $fragment = reset($lexemes[Lexer::RAW]);
 
-        $this->assertEquals(Lexer::PRINTER, $fragment['type']);
+        $this->assertEquals(Lexer::RAW, $fragment['type']);
         $this->assertTrue($fragment['print']);
-        $this->assertTrue($fragment['escape']);
+        $this->assertFalse($fragment['escape']);
         $this->assertEquals('T_VAR', $fragment['name']);
         $this->assertEquals($lexObject->getSource(), $lexObject->getTemplate());
         $this->assertEquals(trim($lexObject->getTemplate()), $fragment['code']);
@@ -59,15 +59,15 @@ class VariableTest extends TestCase
     public function dataProviderSource(): array
     {
         return [
-            ['{{var }}'],
-            ['{{var}}'],
-            ['{{ var}}'],
-            ['{{ var }}'],
-            ['  {{ var }}'],
-            ['  {{ var }}   '],
-            ['  {{ var  }}'],
-            ['  {{ var}}    '],
-            ['  {{      var }}           '],
+            ['{!var !}'],
+            ['{!var!}'],
+            ['{! var!}'],
+            ['{! var !}'],
+            ['  {! var !}'],
+            ['  {! var !}   '],
+            ['  {! var  !}'],
+            ['  {! var!}    '],
+            ['  {!      var !}           '],
         ];
     }
 
