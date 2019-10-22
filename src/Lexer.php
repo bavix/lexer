@@ -7,15 +7,15 @@ use Bavix\Exceptions;
 class Lexer
 {
 
-    const RAW      = 1;
+    const RAW = 1;
     const OPERATOR = 2;
-    const PRINTER  = 4;
-    const LITERAL  = 8;
+    const PRINTER = 4;
+    const LITERAL = 8;
 
     /**
      * @var string
      */
-    protected $openLiteralRegExp  = "\{%[ \t\n\r \v]*literal[ \t\n\r \v]*%\}";
+    protected $openLiteralRegExp = "\{%[ \t\n\r \v]*literal[ \t\n\r \v]*%\}";
 
     /**
      * @var string
@@ -32,8 +32,8 @@ class Lexer
      */
     protected $prints = [
         self::OPERATOR => false,
-        self::RAW      => true,
-        self::PRINTER  => true,
+        self::RAW => true,
+        self::PRINTER => true,
     ];
 
     /**
@@ -41,8 +41,8 @@ class Lexer
      */
     protected $escaping = [
         self::OPERATOR => false,
-        self::RAW      => false,
-        self::PRINTER  => true,
+        self::RAW => false,
+        self::PRINTER => true,
     ];
 
     /**
@@ -50,9 +50,9 @@ class Lexer
      */
     protected $phpTags = [
         '<?php' => '<!--',
-        '<?='   => '<!--',
-        '<?'    => '<!--',
-        '?>'    => '-->',
+        '<?=' => '<!--',
+        '<?' => '<!--',
+        '?>' => '-->',
     ];
 
     protected function last($last, $data, $equal = '.')
@@ -93,42 +93,39 @@ class Lexer
         $begin = array_flip($open);
 
         $end = [
-            self::RAW      => '!',
+            self::RAW => '!',
             self::OPERATOR => '%',
-            self::PRINTER  => '}',
+            self::PRINTER => '}',
         ];
 
         $storage = [
-            self::RAW      => [],
+            self::RAW => [],
             self::OPERATOR => [],
-            self::PRINTER  => [],
+            self::PRINTER => [],
         ];
 
         $isOpen = false;
         $iterate = 0;
-        $anyType  = null;
+        $anyType = null;
         $lastChar = null;
-        $type     = null;
-        $mixed    = [];
-        $last     = null;
-        $dot      = null;
-        $code     = '';
-        $print    = null;
+        $type = null;
+        $mixed = [];
+        $last = null;
+        $dot = null;
+        $code = '';
+        $print = null;
 
-        while (!$queue->isEmpty())
-        {
+        while (!$queue->isEmpty()) {
             $read = $queue->pop();
 
             $_type = Validator::getValue($read);
-            $data  = $read[1] ?? $read;
+            $data = $read[1] ?? $read;
 
-            if ($_type === \T_OPEN_TAG || $_type === \T_OPEN_TAG_WITH_ECHO || $_type === \T_CLOSE_TAG)
-            {
+            if ($_type === \T_OPEN_TAG || $_type === \T_OPEN_TAG_WITH_ECHO || $_type === \T_CLOSE_TAG) {
                 continue;
             }
 
-            if ($type && $_type === \T_INLINE_HTML)
-            {
+            if ($type && $_type === \T_INLINE_HTML) {
                 $lvl = 1;
                 $rEnd = $data;
 
@@ -136,50 +133,42 @@ class Lexer
                     $read = $queue->pop();
 
                     $_type = Validator::getValue($read);
-                    $_data  = $read[1] ?? $read;
+                    $_data = $read[1] ?? $read;
 
-                    if ($_type === \T_OPEN_TAG || $_type === \T_OPEN_TAG_WITH_ECHO || $_type === \T_CLOSE_TAG)
-                    {
+                    if ($_type === \T_OPEN_TAG || $_type === \T_OPEN_TAG_WITH_ECHO || $_type === \T_CLOSE_TAG) {
                         continue;
                     }
 
-                    if ($_type === \T_NS_SEPARATOR)
-                    {
+                    if ($_type === \T_NS_SEPARATOR) {
                         $lvl++;
                     }
 
-                    if ($_data === $rEnd)
-                    {
+                    if ($_data === $rEnd) {
                         $lvl--;
                     }
 
                     $data .= $_data;
 
-                    if ($queue->isEmpty())
-                    {
+                    if ($queue->isEmpty()) {
                         throw new \ParseError('Error code `' . $code . $data . '`');
                     }
 
                 } while ($lvl);
             }
 
-            if ($_type === \T_STRING)
-            {
+            if ($_type === \T_STRING) {
                 $isVar = preg_match('~[a-z_]+[\w_]*~i', $data);
 
                 $_type = Validator::getType($data, $isVar ? \T_VARIABLE : \T_STRING, $type);
 
-                if (\defined($data))
-                {
+                if (\defined($data)) {
                     $_type = Validator::T_CONSTANT;
                 }
 
-                if ($isVar && !empty($mixed))
-                {
+                if ($isVar && !empty($mixed)) {
                     $mix = current($mixed);
 
-                    if ($mix->type === \T_FOR && $data === 'in')
-                    {
+                    if ($mix->type === \T_FOR && $data === 'in') {
                         $_type = Validator::get('T_FOR_IN');
                     }
                 }
@@ -204,109 +193,88 @@ class Lexer
 
             $code .= $data;
 
-            if ($dot && $anyType === \T_WHITESPACE)
-            {
+            if ($dot && $anyType === \T_WHITESPACE) {
                 throw new Exceptions\Runtime('Undefined dot `' . implode(' ', $mixed) . ' ' . $data . '`');
             }
 
-            if ($_type === \T_WHITESPACE)
-            {
+            if ($_type === \T_WHITESPACE) {
                 $lastChar = $data;
-                $anyType  = $_type;
+                $anyType = $_type;
                 continue;
             }
 
             $anyType = $_type;
 
-            if (!$type && $data === '{' && $code !== '{{')
-            {
+            if (!$type && $data === '{' && $code !== '{{') {
                 $code = $data;
             }
 
             $index = $lastChar . $data;
 
-            if ((!$isOpen && isset($open[$index]) && $type) || (isset($close[$index]) && !$type))
-            {
+            if ((!$isOpen && isset($open[$index]) && $type) || (isset($close[$index]) && !$type)) {
                 throw new Exceptions\Logic('Syntax error `' . $lastChar . $data . '`');
             }
 
-            if (!$isOpen && isset($open[$index]))
-            {
-                if ($dot)
-                {
+            if (!$isOpen && isset($open[$index])) {
+                if ($dot) {
                     throw new Exceptions\Runtime('Undefined dot');
                 }
 
                 $isOpen = true;
-                $type  = $open[$lastChar . $data];
+                $type = $open[$lastChar . $data];
                 $print = $this->prints[$type];
-            }
-            else if (isset($close[$index]))
-            {
-                if ($dot)
-                {
+            } else if (isset($close[$index])) {
+                if ($dot) {
                     throw new Exceptions\Runtime('Undefined dot `' . \implode(' ', $mixed) . '`');
                 }
 
-                if ($type !== $close[$lastChar . $data])
-                {
+                if ($type !== $close[$lastChar . $data]) {
                     throw new Exceptions\Runtime(
                         'Undefined syntax code `' . $begin[$type] . ' ' . \implode(' ', $mixed) . $data . '`');
                 }
 
-                if (empty($mixed))
-                {
+                if (empty($mixed)) {
                     throw new Exceptions\Blank('Empty tokens `' . $code . '`');
                 }
 
-                $token    = current($mixed);
-                $name     = $token->name;
+                $token = current($mixed);
+                $name = $token->name;
                 $fragment = \preg_replace('~[ \t\n\r\v]{2,}~', ' ', $code);
 
                 $storage[$type][] = [
-                    'type'     => $type,
-                    'print'    => $print,
-                    'escape'   => $this->escaping[$type],
-                    'name'     => $name,
-                    'code'     => $code,
+                    'type' => $type,
+                    'print' => $print,
+                    'escape' => $this->escaping[$type],
+                    'name' => $name,
+                    'code' => $code,
                     'fragment' => \trim(\mb_substr($fragment, 2, -2)),
-                    'tokens'   => $mixed
+                    'tokens' => $mixed
                 ];
 
                 $isOpen = false;
                 $mixed = [];
-                $type  = null;
-                $last  = null;
-                $code  = '';
-            }
-            else if ($type)
-            {
-                if ($end[$type] !== $data)
-                {
-                    if ($this->last($last, $data, '('))
-                    {
+                $type = null;
+                $last = null;
+                $code = '';
+            } else if ($type) {
+                if ($end[$type] !== $data) {
+                    if ($this->last($last, $data, '(')) {
                         $last->type = \T_FUNCTION;
-                    }
-                    else if ($this->last($last, $data, '.') || $dot)
-                    {
-                        $dot         = !$dot;
+                    } else if ($this->last($last, $data, '.') || $dot) {
+                        $dot = !$dot;
                         $last->token .= $data;
 
                         continue;
                     }
 
                     $mixed[] = $last = new Token($data, $_type);
-                }
-                else
-                {
+                } else {
                     $_next = $queue->next();
 
-                    if ($end[$type] === $data && $_next)
-                    {
+                    if ($end[$type] === $data && $_next) {
                         $_nextToken = $_next[1] ?? $_next;
 
-                        if ($_nextToken !== '}')
-                        {
+                        if ($_nextToken !== '}') {
                             $mixed[] = $last = new Token($data, $_type);
                         }
                     }
@@ -319,7 +287,7 @@ class Lexer
 
         // set literal & cleanup literals
         $storage[self::LITERAL] = $this->literals;
-        $this->literals         = [];
+        $this->literals = [];
 
         return $storage;
     }
@@ -356,20 +324,18 @@ class Lexer
         );
 
         // if check literal open then throw
-        if (\preg_match("~{$this->openLiteralRegExp}~u", $source))
-        {
+        if (\preg_match("~{$this->openLiteralRegExp}~u", $source)) {
             throw new Exceptions\Logic('Literal isn\'t closed');
         }
 
         // if check literal close then throw
-        if (\preg_match("~{$this->closeLiteralRegExp}~u", $source))
-        {
+        if (\preg_match("~{$this->closeLiteralRegExp}~u", $source)) {
             throw new Exceptions\Logic('Literal isn\'t open');
         }
 
         // remove comments
-        $source  = \preg_replace('~\{(?<q>\*)\X*?(\k<q>)\}~u', '', $source);
-        $source  = \strtr($source, $this->phpTags); // remove php tags
+        $source = \preg_replace('~\{(?<q>\*)\X*?(\k<q>)\}~u', '', $source);
+        $source = \strtr($source, $this->phpTags); // remove php tags
         $lexCode = \preg_replace('~("|\'|#|\/{2}|\/\*)~u', '?>$1<?php ', $source);
 
         // analysis tokens

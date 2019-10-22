@@ -11,7 +11,7 @@ use Bavix\Iterator\Traits\JsonSerializable;
  *
  * @property string $token
  * @property string $name
- * @property int    $type
+ * @property int $type
  */
 class Token implements \JsonSerializable
 {
@@ -32,8 +32,8 @@ class Token implements \JsonSerializable
     public function __construct($data, $type)
     {
         $this->data['token'] = $data;
-        $this->data['type']  = $type;
-        $this->data['name']  = Validator::get($type);
+        $this->data['type'] = $type;
+        $this->data['name'] = Validator::get($type);
     }
 
     /**
@@ -60,13 +60,11 @@ class Token implements \JsonSerializable
      */
     public function __set($name, $value)
     {
-        if ($name === 'type')
-        {
+        if ($name === 'type') {
             $this->data['name'] = Validator::get($value);
         }
 
-        if ($name === 'name')
-        {
+        if ($name === 'name') {
             $this->data['type'] = Validator::get($value);
         }
 

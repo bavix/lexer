@@ -11,10 +11,10 @@ class Queue extends \Bavix\Foundation\Arrays\Queue
     public function next()
     {
         $self = clone $this;
-        
-        return $self->isEmpty() ? 
-            null : 
+
+        return $self->isEmpty() ?
+            null :
             $self->pop();
     }
-    
+
 }
