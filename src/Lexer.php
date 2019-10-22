@@ -55,7 +55,13 @@ class Lexer
         '?>' => '-->',
     ];
 
-    protected function last($last, $data, $equal = '.')
+    /**
+     * @param $last
+     * @param $data
+     * @param string $equal
+     * @return bool
+     */
+    protected function last($last, $data, $equal = '.'): bool
     {
         return
             // last exists
@@ -71,7 +77,11 @@ class Lexer
             preg_match('~[a-z_]+~i', $last->token);
     }
 
-    protected function analysis(array $tokens)
+    /**
+     * @param array $tokens
+     * @return array
+     */
+    protected function analysis(array $tokens): array
     {
         $queue = new Queue($tokens);
         $queue->pop(); // remove open <?php
@@ -297,7 +307,7 @@ class Lexer
      *
      * @return string
      */
-    protected function literal(array $matches)
+    protected function literal(array $matches): string
     {
         // hash from matches
         $hash = '[!' . __FUNCTION__ . '::read(' . \crc32($matches[1]) . ')!]';
@@ -313,29 +323,49 @@ class Lexer
      * @param string $source
      *
      * @return array
+     * @deprecated use fragments
      */
-    public function tokens(&$source)
+    public function tokens(&$source): array
+    {
+        $source = $this->filter($source);
+        return $this->lexemes($source);
+    }
+
+    /**
+     * @param string $source
+     * @return string
+     */
+    public function filter(string $source): string
     {
         // literal from source to array
-        $source = \preg_replace_callback(
+        $filter = \preg_replace_callback(
             "~{$this->openLiteralRegExp}(\X*?){$this->closeLiteralRegExp}~u",
             [$this, 'literal'],
             $source
         );
 
         // if check literal open then throw
-        if (\preg_match("~{$this->openLiteralRegExp}~u", $source)) {
+        if (\preg_match("~{$this->openLiteralRegExp}~u", $filter)) {
             throw new Exceptions\Logic('Literal isn\'t closed');
         }
 
         // if check literal close then throw
-        if (\preg_match("~{$this->closeLiteralRegExp}~u", $source)) {
+        if (\preg_match("~{$this->closeLiteralRegExp}~u", $filter)) {
             throw new Exceptions\Logic('Literal isn\'t open');
         }
 
         // remove comments
-        $source = \preg_replace('~\{(?<q>\*)\X*?(\k<q>)\}~u', '', $source);
-        $source = \strtr($source, $this->phpTags); // remove php tags
+        $filter = \preg_replace('~\{(?<q>\*)\X*?(\k<q>)\}~u', '', $filter);
+
+        return \strtr($filter, $this->phpTags); // remove php tags
+    }
+
+    /**
+     * @param string $source
+     * @return array
+     */
+    public function lexemes(string $source): array
+    {
         $lexCode = \preg_replace('~("|\'|#|\/{2}|\/\*)~u', '?>$1<?php ', $source);
 
         // analysis tokens
@@ -343,6 +373,17 @@ class Lexer
         // source progress with helped tokenizer
             \token_get_all('<?php' . PHP_EOL . $lexCode)
         );
+    }
+
+    /**
+     * @param string $source
+     * @return LexerObject
+     */
+    public function lexerObject(string $source): LexerObject
+    {
+        $template = $this->filter($source);
+        $lexemes = $this->lexemes($source);
+        return new LexerObject($source, $template, $lexemes);
     }
 
 }

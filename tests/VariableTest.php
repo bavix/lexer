@@ -15,26 +15,28 @@ class VariableTest extends TestCase
      */
     public function testSimple(string $source): void
     {
-        $fragments = $this->lexer->tokens($source);
+        $lexObject = $this->lexer->lexerObject($source);
+        $lexemes = $lexObject->getLexemes();
 
         // empty
-        $this->assertEquals([], $fragments[Lexer::RAW]);
-        $this->assertEquals([], $fragments[Lexer::OPERATOR]);
-        $this->assertEquals([], $fragments[Lexer::LITERAL]);
+        $this->assertEquals([], $lexemes[Lexer::RAW]);
+        $this->assertEquals([], $lexemes[Lexer::OPERATOR]);
+        $this->assertEquals([], $lexemes[Lexer::LITERAL]);
 
-        $this->assertCount(1, $fragments[Lexer::PRINTER]);
+        $this->assertCount(1, $lexemes[Lexer::PRINTER]);
 
         /**
          * Get first fragment
          * @var array $fragment
          */
-        $fragment = reset($fragments[Lexer::PRINTER]);
+        $fragment = reset($lexemes[Lexer::PRINTER]);
 
         $this->assertEquals(4, $fragment['type']);
         $this->assertTrue($fragment['print']);
         $this->assertTrue($fragment['escape']);
         $this->assertEquals('T_VAR', $fragment['name']);
-        $this->assertEquals(trim($source), $fragment['code']);
+        $this->assertEquals($lexObject->getSource(), $lexObject->getTemplate());
+        $this->assertEquals(trim($lexObject->getTemplate()), $fragment['code']);
         $this->assertEquals('var', $fragment['fragment']);
         $this->assertCount(1, $fragment['tokens']);
 
