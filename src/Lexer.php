@@ -382,7 +382,7 @@ class Lexer
     public function lexerObject(string $source): LexerObject
     {
         $template = $this->filter($source);
-        $lexemes = $this->lexemes($source);
+        $lexemes = $this->lexemes($template);
         return new LexerObject($source, $template, $lexemes);
     }
 
