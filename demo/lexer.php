@@ -14,7 +14,7 @@ template;
 
 $lexer = new \Bavix\Lexer\Lexer();
 
-foreach ($lexer->tokens($source) as $tokens)
+foreach ($lexer->lexemes($source) as $tokens)
 {
     foreach ($tokens as $token)
     {
