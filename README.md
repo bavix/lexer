@@ -2,6 +2,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/bavix/lexer/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/bavix/lexer/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/bavix/lexer/badges/build.png?b=master)](https://scrutinizer-ci.com/g/bavix/lexer/build-status/master)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/bavix/lexer/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
+[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/bavix/lexer/master)](https://packagist.org/packages/bavix/lexer)
 
 [![Package Rank](https://phppackages.org/p/bavix/lexer/badge/rank.svg)](https://packagist.org/packages/bavix/lexer)
 [![Latest Stable Version](https://poser.pugx.org/bavix/lexer/v/stable)](https://packagist.org/packages/bavix/lexer)
