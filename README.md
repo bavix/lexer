@@ -17,8 +17,3 @@ lexer - the process of analytical analysis of the input sequence of characters i
 * **Version**: [![Latest Stable Version](https://poser.pugx.org/bavix/lexer/v/stable)](https://packagist.org/packages/bavix/lexer)
 * **PHP Version**: 7.2+ 
 * **[Composer](https://getcomposer.org/):** `composer require bavix/lexer`
-
----
-Supported by
-
-[![Supported by JetBrains](https://cdn.rawgit.com/bavix/development-through/46475b4b/jetbrains.svg)](https://www.jetbrains.com/)
